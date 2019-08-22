@@ -1,0 +1,7 @@
+C UTEP Electronic Structure Lab (2019)
+C
+        function sinf(x)
+        implicit real*8 (a-h,o-z)
+          sinf=sin(x)
+        return
+        end

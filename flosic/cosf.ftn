@@ -1,0 +1,7 @@
+C UTEP Electronic Structure Lab (2019)
+C
+        function cosf(x)
+        implicit real*8 (a-h,o-z)
+          cosf=cos(x)
+        return
+        end                                     
