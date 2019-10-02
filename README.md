@@ -6,7 +6,7 @@ FLOSIC18 is an electronic structure software package that implements the FERMI-L
 
 ## Documentation
 
-For more information on how to use FLOSIC18, please see the file FLOSIC_documentation_and_tutorials included in the download.
+For more information on how to use FLOSIC18, please see the file FLOSIC_Tutorials_and_Documentation.pdf included in the download.
 
 ## Support
 
