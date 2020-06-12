@@ -117,7 +117,7 @@ C
        AVERAGE=.TRUE.
 !
 ! Cannot write files in parallel, so skip this in group mode
-! Global master will take care of this in the encapsulating global call
+! Global manager will take care of this in the encapsulating global call
 !
 %ifndef GROUP
        OPEN(99,FILE='AVRGDAT',FORM='FORMATTED',STATUS='UNKNOWN')

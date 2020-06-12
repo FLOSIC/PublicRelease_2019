@@ -7,7 +7,7 @@ c
      &                   LDFTF,MXXD,KXXS,KXXO)
 c
 c subroutine for parallel evaluation of local and xc potential
-c called by master 
+c called by manager
 c DV Porezag, 08/99
 c
 %ifdef MPI
@@ -34,10 +34,10 @@ c
        LOGICAL,INTENT(IN) :: LDFTF
        INTEGER,INTENT(IN) :: MXXD,KXXS,KXXO
 c
-c produce fatal error if I am a slave
+c produce fatal error if I am a worker
 c
        IF (SHMRANK.NE.0) THEN
-        write(6,*)'FATAL: PAMVLXC_GRP CALLED BY SLAVE'
+        write(6,*)'FATAL: PAMVLXC_GRP CALLED BY WORKER'
         CALL STOPIT
        END IF 
 !
@@ -54,20 +54,20 @@ C
        ALLOCATE(VLOS(MPBLOCKXC),STAT=IERR)
        IF(IERR/=0)WRITE(6+IRANK,*)'GETVLXC:ERROR ALLOCATING VLOS'
 c
-c determine maximum number of points for master, smallest allowed packet size
+c determine maximum number of points for manager, smallest allowed packet size
 c     
        NMAST=  MPBLOCK/(3*SHM_SIZE+1)
        !IF(LIBXC1.OR.ISMGGA) NMAST = MPBLOCKXC !YY Possibly needed
        NSMALL= MPBLOCKXC/10 
 C
 C start looping over mesh points
-C mode 1: all points sent out, wait for next slave to complete
+C mode 1: all points sent out, wait for next worker to complete
 C         and continue with mode 5
-C      2: slaves are available for work
-C      3: slaves are busy, do some work myself
-C      4: slaves are busy, wait for next one to finish
+C      2: workers are available for work
+C      3: workers are busy, do some work myself
+C      4: workers are busy, wait for next one to finish
 C         and continue with mode 5
-C      5: get data from slaves
+C      5: get data from workers
 C                        
        LPTS= 0
    10  CONTINUE
@@ -76,7 +76,7 @@ C
         IF (MPTS .EQ. 0) THEN
          MODE= 1
          IF (NCALLED_GRP .EQ. 0) GOTO 20
-         CALL CKCHILD_GRP(4,TID)
+         CALL CKWORKER_GRP(4,TID)
          MODE= 5
         ELSE
          IF (NCALLED_GRP.NE.SHM_SIZE) THEN
@@ -91,7 +91,7 @@ C
 
           IF ((MPTS .LT. NSMALL) .AND. (MPTS .LT. NMSH-LPTS)) THEN
            MODE= 4
-           CALL CKCHILD_GRP(4,TID)
+           CALL CKWORKER_GRP(4,TID)
            MODE= 5
           END IF
          END IF
@@ -147,7 +147,7 @@ c
          LPTS=LPTS+MPTS
         END IF
 c
-c mode 5: receive data from slave
+c mode 5: receive data from worker
 c
         IF (MODE .EQ. 5) THEN
          TAG= 705

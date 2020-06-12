@@ -97,9 +97,9 @@ c startup cluster code on one node and cpuhog on the rest
 c
       IF (IRANK.EQ.0) THEN
 !%ifdef GROUP
-!       write(iout,*)'THIS IS MASTER NODE FROM GROUP',MYGROUP
+!       write(iout,*)'THIS IS MANAGER NODE FROM GROUP',MYGROUP
 !%else
-       write(iout,*)'MPI: Number of slave processes=',NPROC
+       write(iout,*)'MPI: Number of worker processes=',NPROC
 !%endif
        TIME1=MPI_WTIME()
        CALL CLUSTER2()

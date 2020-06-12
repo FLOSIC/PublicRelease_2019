@@ -155,8 +155,8 @@ c
 c
 %ifdef MPI
 c
-c MPI: send data to children
-c This will zero out FRC1 and FRC2 on slaves
+c MPI: send data to workers
+c This will zero out FRC1 and FRC2 on workers
 c
       IF (NPROC .GT. 0) THEN
        CALL SENDDATA(105)
@@ -233,7 +233,7 @@ c
 c
 %else
 c
-c MPI: if all children are busy, let master do some work
+c MPI: if all workers are busy, let manager do some work
 c      but do not allow packets smaller than 10 points
 c
        IF (NPROC .EQ. 0) THEN
@@ -243,19 +243,19 @@ c
          CALL FRCSLV(MPTS,LPTS)
         END IF
        ELSE
-        CALL CKCHILD(1,NTID)
+        CALL CKWORKER(1,NTID)
         IF (NCALLED .NE. NPROC) THEN
          CALL PAMFPUL(1,MPTS,LPTS)
         ELSE
          MPTS= MIN(NMAST,NMSH-LPTS) !This statement will break libxc/mgga
                                     !offset unless NMAST == NMAX
          IF(LIBXC1.OR.ISMGGA) THEN
-         !For meta-GGA, it is faster when the master proc is free all time.
+         !For meta-GGA, it is faster when the manager proc is free all time.
           MPTS= 0
-          CALL CKCHILD(2,NTID)
+          CALL CKWORKER(2,NTID)
          ELSE IF (MPTS .LE. 10) THEN
           MPTS= 0
-          CALL CKCHILD(2,NTID)
+          CALL CKWORKER(2,NTID)
          ELSE
           IF(LSICF) THEN
            CALL FRCSLV0(MPTS,LPTS)

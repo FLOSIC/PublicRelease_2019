@@ -6,7 +6,7 @@ c
       SUBROUTINE PASFPUL(MODE)
 c
 c calculate forces in parallel
-c called by slaves DVP 10/98  
+c called by worker DVP 10/98
 c
 %ifdef MPI
        use debug1
@@ -31,10 +31,10 @@ c
      &  BUF3(MAX_OCC,MAX_OCC),BUF4(MAX_OCC,MAX_OCC),  !<<<<
      &  BUF5(MAX_OCC,MAX_OCC),BUF6(MAX_OCC,MAX_OCC)   !<<<<
 c
-c produce fatal error if I am the master
+c produce fatal error if I am the manager
 c
        IF (IRANK.EQ.0) THEN
-        write(6,*)'FATAL: PASFPUL CALLED BY MASTER'
+        write(6,*)'FATAL: PASFPUL CALLED BY MANAGER'
         CALL STOPIT
        END IF         
 c

@@ -3,7 +3,7 @@ C
 c
 c *******************************************************************
 c
-c this routine broadcasts data to the children
+c this routine broadcasts data to the workers
 c depending on the value of job, different data sets will be sent
 c valid ranges for job are from minjob to maxjob
 c
@@ -290,7 +290,7 @@ C       ENDDO
        END IF
 c
 c send general data for creation of interstitial mesh
-c initialize npts= 0 if not master node
+c initialize npts= 0 if not manager node
 c
        IF (JOB .EQ. 106) THEN
         if(IRANK .NE. 0) then
@@ -405,7 +405,7 @@ C       CALL MPI_BCAST(NNZH,1,MPI_INTEGER,ROOT,
 C    &                 MPI_COMM_WORLD,IERR)
 C       CALL MPI_BCAST(NNZO,1,MPI_INTEGER,ROOT,
 C    &                 MPI_COMM_WORLD,IERR)
-c slave nodes allocate local array for eigenvalues
+c worker nodes allocate local array for eigenvalues
         IF(IRANK.NE.0)THEN
          ALLOCATE(AEVAL(INBAS),STAT=IERR)
          IF(IERR.NE.0)then
@@ -453,7 +453,7 @@ C     &                MPI_COMM_WORLD,IERR)
 C End Broadcast HSTOR
 
         CALL DIAGGES
-c slave nodes deallocate local array for eigenvalues
+c worker nodes deallocate local array for eigenvalues
         IF(IRANK.NE.0)THEN
          DEALLOCATE(AEVAL,STAT=IERR)
          IF(IERR.NE.0)then
@@ -492,7 +492,7 @@ C    &                 MPI_COMM_WORLD,IERR)
      &                 MPI_COMM_WORLD,IERR)
 !       WRITE(IRANK+6,*)'SENDDATA NBAS',INBAS,'INITIAL',IINITIAL
 !       CALL FLUSH(IRANK+6)
-c slave nodes allocate local array for eigenvalues
+c worker nodes allocate local array for eigenvalues
         IF(IRANK.NE.0)THEN
          ALLOCATE(AEVAL(INBAS),STAT=IERR)
          IF(IERR.NE.0)then
@@ -512,7 +512,7 @@ C End Broadcast HSTOR
 !       WRITE(IRANK+6,*)'BEFORE FUNCTION CALL,ISPN',ISPN
         CALL FLUSH(IRANK+6)
         CALL DIAG_S_SYM(IINITIAL,AEVAL)
-c slave nodes deallocate local array for eigenvalues
+c worker nodes deallocate local array for eigenvalues
         IF(IRANK.NE.0)THEN
          DEALLOCATE(AEVAL,STAT=IERR)
          IF(IERR.NE.0)then
@@ -570,7 +570,7 @@ C
 !         CALL TRACER('FINISHED 119')
        ENDIF
 C
-C SLAVES DEALLOCATE HAM AND PHIRES
+C WORKERS DEALLOCATE HAM AND PHIRES
 C
        IF(JOB.EQ.120) THEN
          IF(IRANK/=0) THEN

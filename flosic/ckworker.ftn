@@ -3,7 +3,7 @@ C
 c
 c *******************************************************************
 c
-      SUBROUTINE CKCHILD(MODE,TID)
+      SUBROUTINE CKWORKER(MODE,TID)
 c 
 c 02/13/97 David Clay Patton
 c 04/17/97 converted from PVM to MPI (DCP)
@@ -25,7 +25,7 @@ c
       TID=0
       IF (NCALLED.EQ.0) RETURN
 c
-c check to see if any children are finished playing
+c check to see if any workers are finished playing
 c
       TAG=1
       IF (MODE.EQ.1) THEN
@@ -41,11 +41,11 @@ C         CALL TRACER('FOUND DONE',TID)
          NCALLED=NCALLED-1
          CALL FREETID(TID)
        ELSE
-C         CALL TRACER('NO CHILD DONE FOUND')
+C         CALL TRACER('NO WORKER DONE FOUND')
        END IF
       END IF
 c
-c if all children are out playing then get result back from first to finish
+c if all workers are out playing then get result back from first to finish
 c otherwise return immediately
 c
       IF (MODE.EQ.2) THEN
@@ -53,18 +53,18 @@ c
         CALL MPI_RECV(TID,1,MPI_INTEGER,MPI_ANY_SOURCE,TAG,
      &                MPI_COMM_WORLD,IRECVSTAT,IERR)
         NCALLED=NCALLED-1
-C        CALL TRACER('CKCHILD:NCALLED',NCALLED)
-C        CALL TRACER('CKCHILD:NPROC',NPROC)
-C        CALL TRACER('CKCHILD:TID',TID)
+C        CALL TRACER('CKWORKER:NCALLED',NCALLED)
+C        CALL TRACER('CKWORKER:NPROC',NPROC)
+C        CALL TRACER('CKWORKER:TID',TID)
         CALL FREETID(TID)
        END IF
       END IF
 c
-c let all children finish
+c let all workers finish
 c
       IF (MODE.EQ.3) THEN 
         IF (NCALLED.NE.0) THEN
-!          CALL TRACER('WAITING FOR CHILDREN TO FINISH,NCALLED=',NCALLED)
+!          CALL TRACER('WAITING FOR WORKERS TO FINISH,NCALLED=',NCALLED)
           DO I=1,NCALLED
             CALL MPI_RECV(TID,1,MPI_INTEGER,MPI_ANY_SOURCE,TAG,
      &                 MPI_COMM_WORLD,IRECVSTAT,IERR)
@@ -75,7 +75,7 @@ c
         NCALLED=0
       END IF
 c
-c wait for the first child to finish
+c wait for the first worker to finish
 c
       IF (MODE.EQ.4) THEN 
         IF (NCALLED.EQ.0) RETURN

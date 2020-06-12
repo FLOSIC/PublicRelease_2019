@@ -7,8 +7,8 @@ c
 c
 c 12/98 Dirk V. Porezag 
 c
-c mode 1: get box data from master and call fillist
-c mode 2: send mesh points to master
+c mode 1: get box data from manager and call fillist
+c mode 2: send mesh points to manager
 c
 %ifdef MPI
        use mesh1,only : wmsh,rmsh,nmsh
@@ -25,10 +25,10 @@ c
        DIMENSION BOX(2,3)
        INTEGER NMULT
 c
-c produce fatal error if I am the master
+c produce fatal error if I am the manager
 c
        IF (IRANK.EQ.0) THEN
-        write(6,*)'FATAL: PASMESH CALLED BY MASTER'
+        write(6,*)'FATAL: PASMESH CALLED BY MANAGER'
         CALL STOPIT
        END IF    
       
@@ -50,7 +50,7 @@ c
         CALL MPI_SSEND(IRANK,1,MPI_INTEGER,0,TAG,MPI_COMM_WORLD,IERR)
        END IF                      
 c
-c send mesh points to master
+c send mesh points to manager
 c  
        IF (MODE.EQ.2) THEN
         TAG= 1501

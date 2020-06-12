@@ -7,7 +7,7 @@ c
 c
 c 08/99 Dirk V. Porezag
 c 
-c Pasvlxc is called by a slave process to deal with the calculation
+c Pasvlxc is called by a worker process to deal with the calculation
 c of the exchange-correlation and coulomb potential
 c 
 %ifdef MPI
@@ -45,10 +45,10 @@ c
        ALLOCATE(VLOS(MPBLOCKXC),STAT=IERR)
        IF(IERR/=0)WRITE(6,*)'GETVLXC:ERROR ALLOCATING VLOS'
 c
-c produce fatal error if I am the master
+c produce fatal error if I am the manager
 c
        IF (IRANK.EQ.0) THEN
-        write(6,*)'FATAL: PASVLXC CALLED BY MASTER'
+        write(6,*)'FATAL: PASVLXC CALLED BY MANAGER'
         CALL STOPIT
        END IF               
 c

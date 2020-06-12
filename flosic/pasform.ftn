@@ -7,9 +7,9 @@ c
 c
 c subroutine for parallel evaluation of fourier transform of rho
 c
-c Mode 1: The data is received from the master and rhofftpar
+c Mode 1: The data is received from the manager and rhofftpar
 c         is called  (job 2)
-c Mode 2: The resultant data are sent to the master (job 3)
+c Mode 2: The resultant data are sent to the manager (job 3)
 c
 %ifdef MPI
       use formfakm
@@ -34,14 +34,14 @@ c
 C      COMMON/TMP2/ RKPT(3,MXKPT),RHOKPT(MXKPT,2,2),NKPT
       COMMON/TMP3/BUF1(3*MAX_IDENT),BUF2(3*MAX_IDENT)
 c
-c produce fatal error if I am the master
+c produce fatal error if I am the manager
 c
       IF (IRANK.EQ.0) THEN
-       write(6,*)'FATAL: PASFORM CALLED BY MASTER'
+       write(6,*)'FATAL: PASFORM CALLED BY MANAGER'
        CALL STOPIT
       END IF
 c
-c slave mode= 1: receive data from master, call poisson
+c worker mode= 1: receive data from manager, call poisson
 c
       IF (MODE.EQ.1) THEN
        TAG= 2201
@@ -77,7 +77,7 @@ c
        CALL MPI_SSEND(IRANK,1,MPI_INTEGER,0,TAG,MPI_COMM_WORLD,IERR)
       END IF                    
 c
-c slave mode= 2: send rhokpt data to master via reduce
+c worker mode= 2: send rhokpt data to manager via reduce
 c
       IF (MODE.EQ.2) THEN
        TAG=2301

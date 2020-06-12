@@ -5,7 +5,7 @@
       use debug1
       use mpidat1,only : IRANK,NPROC,&
                          SHMRANK,SHM_SIZE,NCALLED_GRP,SHMCOMM,&
-                         MASTER_SIZE,NCALLED_MASTERS,SHM_MASTER_COMM,&
+                         MANAGER_SIZE,NCALLED_MANAGERS,SHM_MANAGER_COMM,&
                          MYGROUP
       use mesh1,only   : NMSH,RMSH,WMSH
       use common2,only : NSPN,IGGA
@@ -137,22 +137,22 @@
 !
       case(66)
 !            CALL TRACER('SHMRANK',SHMRANK)
-! only global master continues here other masters go to waiting room
+! only global manager continues here other managers go to waiting room
             IF(SHMRANK==ROOT) THEN
-              CALL MPI_BCAST(CONVERGENCE,1,MPI_LOGICAL,ROOT,SHM_MASTER_COMM,IERR)
+              CALL MPI_BCAST(CONVERGENCE,1,MPI_LOGICAL,ROOT,SHM_MANAGER_COMM,IERR)
               IF(IRANK==ROOT) THEN
-!                CALL TRACER('I AM GLOBAL MASTER')
+!                CALL TRACER('I AM GLOBAL MANAGER')
 !                CALL TRACER('STARTING SENNDATA')
-                CALL SENDDATA_MASTERS(101)
-                CALL SENDDATA_MASTERS(102)
-                CALL SENDDATA_MASTERS(103)
-                CALL SENDDATA_MASTERS(104)
-                CALL SENDDATA_MASTERS(105)
-                CALL SENDDATA_MASTERS(208)
-                CALL SENDDATA_MASTERS(209)
-                CALL SENDDATA_MASTERS(202) !Broadcast of LIBXC1 and ISMGGA
+                CALL SENDDATA_MANAGERS(101)
+                CALL SENDDATA_MANAGERS(102)
+                CALL SENDDATA_MANAGERS(103)
+                CALL SENDDATA_MANAGERS(104)
+                CALL SENDDATA_MANAGERS(105)
+                CALL SENDDATA_MANAGERS(208)
+                CALL SENDDATA_MANAGERS(209)
+                CALL SENDDATA_MANAGERS(202) !Broadcast of LIBXC1 and ISMGGA
                 IF(CONVERGENCE) THEN
-                  CALL SENDDATA_MASTERS(211)
+                  CALL SENDDATA_MANAGERS(211)
                 ENDIF
 !                CALL TRACER('DONE SENNDATA')
 ! Loop over orbitals to hand out work
@@ -160,19 +160,19 @@
                 DO IORBX=1,NFRM(ARG1)
 !                  CALL GTTIME(TIME1)
 !                  CALL TRACER('HANDING OUT ORBITAL',IORBX)
-                  CALL CKCHILD_GRP_MASTER(1,NTID)
-!                  CALL TRACER('AFTER CKCHILD_GRP_MASTER',NTID)
-                  IF (NCALLED_MASTERS .NE. MASTER_SIZE) THEN
+                  CALL CKWORKER_GRP_MANAGER(1,NTID)
+!                  CALL TRACER('AFTER CKWORKER_GRP_MANAGER',NTID)
+                  IF (NCALLED_MANAGERS .NE. MANAGER_SIZE) THEN
 !                    CALL TRACER('CALLING PAMAPOTNL(1)')
 !                    CALL GTTIME(TIME2)
 !                    CALL TIMOUT('HANDING OUT',TIME2-TIME1)
                     CALL PAMAPOTNL_GRP(1,ARG1,IORBX)
                   ELSE
-! No free children found, master does this iteration
+! No free workers found, manager does this iteration
 !                    CALL TRACER('NONE FOUND I WILL DO',IORBX)
 !                    CALL APOTNL_SIC(TOTQNUM,ARG1,IORBX)
 !                    CALL TRACER('WAITING FOR SOMEONE TO FINISH')
-                    CALL CKCHILD_GRP_MASTER(4,NTID)
+                    CALL CKWORKER_GRP_MANAGER(4,NTID)
 !                    CALL GTTIME(TIME2)
 !                    CALL TIMOUT('HANDING OUT 2',TIME2-TIME1)
                     CALL PAMAPOTNL_GRP(1,ARG1,IORBX)
@@ -180,29 +180,29 @@
                 ENDDO
                 CALL PAMAPOTNL_GRP(2,ARG1,1)
 !                CALL WRITE_SIC
-! LOOP finished now tell other masters and own slaves to go back to global communicatior
+! LOOP finished now tell other managers and own workers to go back to global communicatior
                 TAG=0
-!                CALL TRACER('TELLING OTHER MASTERS TO FINISH')
-                DO I=1,MASTER_SIZE
-                  CALL MPI_SEND(-1,1,MPI_INTEGER,I,TAG,SHM_MASTER_COMM,IERR)
+!                CALL TRACER('TELLING OTHER MANAGERS TO FINISH')
+                DO I=1,MANAGER_SIZE
+                  CALL MPI_SEND(-1,1,MPI_INTEGER,I,TAG,SHM_MANAGER_COMM,IERR)
                 ENDDO
-!                CALL TRACER('FINISHED TELLING OTHER MASTERS')
+!                CALL TRACER('FINISHED TELLING OTHER MANAGERS')
               ELSE
-!                CALL TRACER('I AM A MASTER,GOING TO CPUHOG_GROUP_MASTER')
-                CALL CPUHOG_GROUP_MASTER
-!                CALL TRACER('FINISHED CPUHOG_GROUP_MASTER')
+!                CALL TRACER('I AM A MANAGER,GOING TO CPUHOG_GROUP_MANAGER')
+                CALL CPUHOG_GROUP_MANAGER
+!                CALL TRACER('FINISHED CPUHOG_GROUP_MANAGER')
               ENDIF
               TAG=0
-!              CALL TRACER('TELLING MY SLAVES TO FINISH')
+!              CALL TRACER('TELLING MY WORKERS TO FINISH')
               DO I=1,SHM_SIZE
                 CALL MPI_SEND(-1,1,MPI_INTEGER,I,TAG,SHMCOMM,IERR)
               ENDDO
-!              CALL TRACER('FINISHED TELLING MY SLAVES')
+!              CALL TRACER('FINISHED TELLING MY WORKERS')
             ELSE
-! All slaves go to group waiting room to get orders from their respective master
-!              CALL TRACER('I AM A SLAVE,GOING TO CPUHOG_GROUP_SLAVE')
-              CALL CPUHOG_GROUP_SLAVE
-!              CALL TRACER('FINISHED CPUHOG_SLAVE')
+! All workers go to group waiting room to get orders from their respective manager
+!              CALL TRACER('I AM A WORKER,GOING TO CPUHOG_GROUP_WORKER')
+              CALL CPUHOG_GROUP_WORKER
+!              CALL TRACER('FINISHED CPUHOG_WORKER')
             ENDIF
 !            CALL TRACER('FINISHED GLOBAL CALL 66')
 %endif

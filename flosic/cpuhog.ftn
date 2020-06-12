@@ -56,7 +56,7 @@ c receive data for gethold execution
 c
        IF (JOB.EQ.5) CALL PASHAMIL(1)
 c
-c send gethold data to master
+c send gethold data to manager
 c
        IF (JOB.EQ.6) CALL PASHAMIL(2)
 c
@@ -76,14 +76,14 @@ c receive input data for interstitial mesh and call fillist
 c
        IF (JOB.EQ.14) CALL PASMESH(1)
 c
-c send mesh points to master
+c send mesh points to manager
 c
        IF (JOB.EQ.15) CALL PASMESH(2)
 c
-c recieive data  from master
+c recieive data  from manager
 c      IF (JOB.EQ.16) CALL PASLS(1)
 c
-c send data  to  master
+c send data  to  manager
 c      IF (JOB.EQ.17) CALL PASLS(2)
 c
 c receive input data for diagge from NEWWAVE
@@ -94,7 +94,7 @@ c send eigenvalues and vectors back
 c
 C       IF(JOB.EQ.21) CALL PASWAVE(2)
 C
-c send data to slaves for rhofft  (fourier trans)
+c send data to workers for rhofft  (fourier trans)
 c
        IF(JOB.EQ.22) CALL PASFORM(1)
 c
@@ -106,7 +106,7 @@ C Receive data to do joint density of states section 3
 
        IF(JOB.EQ.24) CALL PASDOSJNT(3,1)
 
-C Send data back to master
+C Send data back to manager
 
        IF(JOB.EQ.25) CALL PASDOSJNT(3,2)
 
@@ -114,7 +114,7 @@ C Receive data to do joint density of states section 1
 
        IF(JOB.EQ.26) CALL PASDOSJNT(1,1)
 
-C Send data back to master
+C Send data back to manager
 
        IF(JOB.EQ.27) CALL PASDOSJNT(1,2)
 
@@ -123,11 +123,11 @@ c receive data for gethold2 execution for libxc/mgga
 c
 !      IF (JOB.EQ.28) CALL PASHAMIL_LIBXC(1)
 c
-c send gethold2 data to master
+c send gethold2 data to manager
 c
 !      IF (JOB.EQ.29) CALL PASHAMIL_LIBXC(2)
 c
-c send data to slaves for rhofft  (fourier trans)
+c send data to workers for rhofft  (fourier trans)
 c
        IF(JOB.EQ.34)THEN
 C      PRINT*,'IRANK IS CALLING  PASLMSIC'
@@ -139,7 +139,7 @@ c get the results back
 c
        IF(JOB.EQ.35) CALL PASLMSIC(2)
 C    
-c send data to slaves for mesh determination
+c send data to workers for mesh determination
 c
        IF(JOB.EQ.36)THEN
 !            CALL PASLM_MSH(1)

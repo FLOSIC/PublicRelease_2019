@@ -3,7 +3,7 @@ C
 c
 c *******************************************************************
 c
-      SUBROUTINE CKCHILD_GRP(MODE,TID)
+      SUBROUTINE CKWORKER_GRP(MODE,TID)
 c 
 c 02/13/97 David Clay Patton
 c 04/17/97 converted from PVM to MPI (DCP)
@@ -23,12 +23,12 @@ c
       INTEGER TID,MODE,TAG,I
       INTEGER IRECVSTAT(MPI_STATUS_SIZE),IFLAG,IERR
 c
-!      CALL TRACER('STARTING CKCHILD_GRP',MODE)
+!      CALL TRACER('STARTING CKWORKER_GRP',MODE)
 !      CALL TRACER('NCALLED_GRP',NCALLED_GRP)
       TID=0
       IF (NCALLED_GRP.EQ.0) RETURN
 c
-c check to see if any children are finished playing
+c check to see if any workers are finished playing
 c
       TAG=1
       IF (MODE.EQ.1) THEN
@@ -45,11 +45,11 @@ c
          NCALLED_GRP=NCALLED_GRP-1
          CALL FREETID_GRP(TID)
        ELSE
-!         CALL TRACER('NO CHILD DONE FOUND')
+!         CALL TRACER('NO WORKER DONE FOUND')
        END IF
       END IF
 c
-c if all children are out playing then get result back from first to finish
+c if all workers are out playing then get result back from first to finish
 c otherwise return immediately
 c
       IF (MODE.EQ.2) THEN
@@ -57,18 +57,18 @@ c
         CALL MPI_RECV(TID,1,MPI_INTEGER,MPI_ANY_SOURCE,TAG,
      &                SHMCOMM,IRECVSTAT,IERR)
         NCALLED_GRP=NCALLED_GRP-1
-!        CALL TRACER('CKCHILD:NCALLED_GRP',NCALLED_GRP)
-!        CALL TRACER('CKCHILD:SHM_SIZE',SHM_SIZE)
-!        CALL TRACER('CKCHILD:TID',TID)
+!        CALL TRACER('CKWORKER:NCALLED_GRP',NCALLED_GRP)
+!        CALL TRACER('CKWORKER:SHM_SIZE',SHM_SIZE)
+!        CALL TRACER('CKWORKER:TID',TID)
         CALL FREETID_GRP(TID)
        END IF
       END IF
 c
-c let all children finish
+c let all workers finish
 c
       IF (MODE.EQ.3) THEN 
         IF (NCALLED_GRP.NE.0) THEN
-!          CALL TRACER('WAITING FOR CHILDREN TO FINISH,NCALLED=',
+!          CALL TRACER('WAITING FOR WORKERS TO FINISH,NCALLED=',
 !     &         NCALLED_GRP)
           DO I=1,NCALLED_GRP
             CALL MPI_RECV(TID,1,MPI_INTEGER,MPI_ANY_SOURCE,TAG,
@@ -82,7 +82,7 @@ c
 !        CALL TRACER('FINISHED MODE 3')
       END IF
 c
-c wait for the first child to finish
+c wait for the first worker to finish
 c
       IF (MODE.EQ.4) THEN 
         IF (NCALLED_GRP.EQ.0) RETURN

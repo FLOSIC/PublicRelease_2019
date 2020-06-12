@@ -56,7 +56,7 @@ C JK98
        HTIM3=0.0D0
        HTIM4=0.0D0
 C
-C DEFINE NUMBER OF AVAILABLE SLAVE PROCESSES
+C DEFINE NUMBER OF AVAILABLE WORKER PROCESSES
 C
        MPROC=NPROC
 c
@@ -175,7 +175,7 @@ C END OF FIRST-TIME-ONLY STUFF
 C
        MODSTOR=2
 C
-C JK98/DVP98: send general data to children
+C JK98/DVP98: send general data to workers
 C
 c
 %ifdef MPI
@@ -249,7 +249,7 @@ c
            IF (DOIT) THEN
             NMPROC=IPW
 c
-c send tasks to slaves 
+c send tasks to workers
 c
 %ifdef MPI
 c
@@ -260,7 +260,7 @@ c
 c
 %endif
 c
-c have the master do some work too
+c have the manager do some work too
 c
             MYIP=NMPROC
             NEWIT=1
@@ -272,7 +272,7 @@ c
              END DO
             END DO
 c
-c get data back from slaves
+c get data back from workers
 c
 %ifdef MPI
 c

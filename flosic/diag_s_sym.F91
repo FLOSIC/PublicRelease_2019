@@ -273,14 +273,14 @@
 ! collect all the orthonormal eigenvectors of the matrix
 ! collection is done only when eigenvectors were requested (IIEV=1)
        if(IIEV.eq.1.and.info.eq.0)then
-!Begin master part
-!Begin slave part.
+!Begin manager part
+!Begin worker part.
        else
 !send the processor coordinates in grid
 !send number rows and columns
 !send the local matrix
 !        CALL MPI_Send(Z,LDR*LDC , MPI_DOUBLE_PRECISION, 0, 30,MPI_COMM_WORLD, IERR)
-! End slave part.
+! End worker part.
       endif!if(IIEV.eq.1 ...)
 
 ! Deallocate local arrays

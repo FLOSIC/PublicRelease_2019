@@ -25,10 +25,10 @@ c
        INTEGER IFNCT,JFNCT,MYIP,NEWIT,MXXX,ITRANS(3)
        DIMENSION AI(3),AJ(3),HSUB(MAXUNSYM,MAXUNSYM)
 c
-c produce fatal error if I am the master
+c produce fatal error if I am the manager
 c
        IF (IRANK.EQ.0) THEN
-        write(6,*)'FATAL: PASHAMIL CALLED BY MASTER'
+        write(6,*)'FATAL: PASHAMIL CALLED BY MANAGER'
         CALL STOPIT
        END IF         
 c
@@ -57,7 +57,7 @@ c
      &                 MPI_COMM_WORLD,IERR)   
        ENDIF
 c
-c send gethold data to master
+c send gethold data to manager
 c
        IF (MODE.EQ.2) THEN
         MXXX=MAXUNSYM*MAXUNSYM

@@ -173,7 +173,7 @@ C
 c
 %ifdef MPI
 c
-c MPI: send general data and initialize pot and rhog for all slaves
+c MPI: send general data and initialize pot and rhog for all workers
 c
 !YY senddata 101 and 102 are in sic code
        CALL SENDDATA(103)
@@ -498,7 +498,7 @@ c
 c
 %else
 c
-c dvp+mrp 10/98: let master do some work when all children are busy
+c dvp+mrp 10/98: let manager do some work when all workers are busy
 c                first deal with single weirdos, then in larger blocks
 c                with non-weirdos. The block size for non-weirdos is
 c                reduced as the number of processors increases
@@ -511,7 +511,7 @@ c
               ELSE
                NMAST= MXPR/(4*NPROC*NSPN)
                IF (NMAST .LE. 0) THEN
-                CALL CKCHILD(2,NTID)
+                CALL CKWORKER(2,NTID)
                 !GOTO 20
                !END IF
                else
@@ -525,7 +525,7 @@ c
                  DO ILNG= 1,3
                   NLOOP= (IP(ICNT,ILNG)+NBLOCK-1)/NBLOCK
                   DO ILOOP= 1,NLOOP
-                   CALL CKCHILD(1,NTID)
+                   CALL CKWORKER(1,NTID)
                    IF (NCALLED .NE. NPROC) exit loop20 
                    NSET= MIN(IP(ICNT,ILNG),NBLOCK)
                    I= IP(ICNT,ILNG)-NSET+1
@@ -583,7 +583,7 @@ c
 c
 %else
 c
-c dvp+mrp 10/98: let master do some work when all children are busy
+c dvp+mrp 10/98: let manager do some work when all workers are busy
 c                first deal with single weirdos, then in larger blocks
 c                with non-weirdos. The block size for non-weirdos is
 c                reduced as the number of processors increases
@@ -596,7 +596,7 @@ c
           ELSE
            NMAST= MXPR/(4*NPROC*NSPN)
            IF (NMAST .LE. 0) THEN
-            CALL CKCHILD(2,NTID)
+            CALL CKWORKER(2,NTID)
            ! GOTO 30
            !END IF
            else
@@ -610,7 +610,7 @@ c
              DO ILNG= 1,3
               NLOOP= (IP(ICNT,ILNG)+NBLOCK-1)/NBLOCK
               DO ILOOP= 1,NLOOP
-               CALL CKCHILD(1,NTID)
+               CALL CKWORKER(1,NTID)
                IF (NCALLED .NE. NPROC) exit loop30 
                NSET= MIN(IP(ICNT,ILNG),NBLOCK)
                I= IP(ICNT,ILNG)-NSET+1

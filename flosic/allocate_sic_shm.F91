@@ -14,7 +14,7 @@ subroutine allocate_sic_shm
 %ifdef MPI
   use debug1
   use global_inputs,only : mb_size
-  use mpidat1,only : shmcomm,shmrank,shm_master_comm,shm_master_rank, &
+  use mpidat1,only : shmcomm,shmrank,shm_manager_comm,shm_manager_rank, &
                      sic_win,irank !,nproc
 
   USE, INTRINSIC :: ISO_C_BINDING, ONLY : C_PTR, C_F_POINTER
@@ -26,7 +26,7 @@ subroutine allocate_sic_shm
 
   integer :: NH,VIRT,I_REP,ierr,MY_COMM,MPI3_SIZE
 %ifdef MPI_3
-!  integer :: shm_size,master_size
+!  integer :: shm_size,manager_size
   real(dp):: mem
  
   integer(KIND=MPI_ADDRESS_KIND) :: winsize
@@ -167,7 +167,7 @@ end subroutine
 ! call mpi_win_unlock_all(psi_win,ierr)
 ! call MPI_win_free (psi_win,ierr)
 
-! call mpi_comm_free(shm_master_comm,ierr)
+! call mpi_comm_free(shm_manager_comm,ierr)
 ! call mpi_comm_free(shmcomm,ierr)
 
 subroutine deallocate_sic_shm

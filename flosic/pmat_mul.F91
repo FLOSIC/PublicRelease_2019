@@ -221,10 +221,10 @@
 
 !       if(IIEV.eq.1.and.info.eq.0)then
 !       if(info.eq.0)then
-!Begin master part
+!Begin manager part
         IF (iam.EQ.0) THEN
 !         write(6,*)'Scalapack:Performing collection of eigenvectors'
-!obtain dimensions of the local array on master node
+!obtain dimensions of the local array on manager node
          LDR2=LDR
          LDC2=LDC
 !k is the rank of the processor that sent the data
@@ -293,8 +293,8 @@
             ENDDO
          ENDDO
 
-!End master part.
-! Begin slave part.
+!End manager part.
+! Begin worker part.
         ELSE
 !send the processor coordinates in grid
          CALL MPI_Send(myrow, 1, MPI_Integer, 0, 10, MPI_COMM_WORLD,IERR)
@@ -306,7 +306,7 @@
          CALL MPI_Send(Z,LDR*LDC , MPI_DOUBLE_PRECISION, 0, 30,MPI_COMM_WORLD, IERR)
 
         ENDIF
-! End slave part.
+! End worker part.
 !------------------------------------------------------------------------------------------
 !       end if   !if(info==0)
       end if   !ifpdgemr2d

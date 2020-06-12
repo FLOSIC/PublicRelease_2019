@@ -5,7 +5,7 @@ c *******************************************************************
 c
       SUBROUTINE PAMHAMIL(MODE,IFNCT,JFNCT,AI,AJ,HSUB,MYIP)
 c
-c Subroutine for parallel hamiltonian called by master
+c Subroutine for parallel hamiltonian called by manager
 c 20/03/98 Jens Kortus   kortus@theo.physik.tu-freiberg.de
 c modifications by DV Porezag 08/99
 c
@@ -27,10 +27,10 @@ c
       DIMENSION HSUB(MAXUNSYM,MAXUNSYM)
       INTEGER TID,JOB,TAG,IERR,ITRANS(3),IRECVSTAT(MPI_STATUS_SIZE)
 c
-c produce fatal error if I am a slave
+c produce fatal error if I am a worker
 c
       IF (IRANK.NE.0) THEN
-        write(6,*)'FATAL: PAMHAMIL CALLED BY SLAVE'
+        write(6,*)'FATAL: PAMHAMIL CALLED BY WORKER'
         CALL STOPIT
       END IF         
 c
@@ -56,7 +56,7 @@ c
      &                TID,TAG,MPI_COMM_WORLD,IERR)   
       END IF  
 c
-c receive gethold data from slave
+c receive gethold data from worker
 C
       IF (MODE.EQ.2) THEN
        TAG=1
