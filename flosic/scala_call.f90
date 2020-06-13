@@ -24,7 +24,7 @@ SUBROUTINE SCALA_CALL(JOB)
     CALL MPI_BCAST(INBAS,1,MPI_INTEGER,ROOT,MPI_COMM_WORLD,IERR)
     CALL MPI_BCAST(IIEV,1,MPI_INTEGER,ROOT,MPI_COMM_WORLD,IERR)
     CALL MPI_BCAST(IIMESH,1,MPI_LOGICAL,ROOT,MPI_COMM_WORLD,IERR)
-! slave nodes allocate local array for eigenvalues
+! worker nodes allocate local array for eigenvalues
     IF(IRANK.NE.0)THEN
       ALLOCATE(AEVAL(INBAS),STAT=IERR)
       IF(IERR.NE.0)then
@@ -48,7 +48,7 @@ SUBROUTINE SCALA_CALL(JOB)
       IIEV=1
       CALL DIAGGES(INBAS,AHAM,AEVAL,IIEV)
     ENDIF
-! slave nodes deallocate local array for eigenvalues
+! worker nodes deallocate local array for eigenvalues
     IF(IRANK.NE.0)THEN
       DEALLOCATE(AEVAL,STAT=IERR)
       IF(IERR.NE.0)then

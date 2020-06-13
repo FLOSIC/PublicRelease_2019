@@ -5,7 +5,7 @@ c *******************************************************************
 c
       SUBROUTINE PAMWAVE(MODE,ISVD,IREP,NBAS)
 C
-C  SENDING BLOCKHAMILTONIANS TO SLAVES FOR DIAGGE
+C  SENDING BLOCKHAMILTONIANS TO WORKERS FOR DIAGGE
 C  JK 09/99
 C  MODE 1: LOOKING FOR A FREE NODE SENDING DATA
 C  MODE 2: RECEIVING RESULTS OF DIAGGE
@@ -23,10 +23,10 @@ C
       INTEGER MODE,IREP
       INTEGER TID,JOB,TAG,IERR,ITRANS(3),IRECVSTAT(MPI_STATUS_SIZE)         
 c
-c produce fatal error if I am a slave
+c produce fatal error if I am a worker
 c
       IF (IRANK.NE.0) THEN
-       write(6,*)'FATAL: PAMWAVE CALLED BY SLAVE'
+       write(6,*)'FATAL: PAMWAVE CALLED BY WORKER'
        CALL STOPIT
       END IF
 C

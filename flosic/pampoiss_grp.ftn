@@ -6,7 +6,7 @@ c *******************************************************************
 c
       SUBROUTINE PAMPOISS_GRP(MODE,ND,MD,MINC,LNG,NWRD,POT,RHOG2)
 c
-c subroutine for parallel poisson evaluation called by master 
+c subroutine for parallel poisson evaluation called by manager
 c 09/16/97 David C. Patton
 c updates and name change by D. Porezag
 c
@@ -50,14 +50,14 @@ C      COMMON/TMP2/ADDBUF(MAX_PTS)
       REAL*8,ALLOCATABLE :: ADDBUF(:)
       INTEGER TID,JOB,TAG,NPAIR,IERR,NGRAD,IPROC,I,J,KSPN,ITRANS(3)
 c
-c produce fatal error if I am a slave
+c produce fatal error if I am a worker
 c
       IF (SHMRANK.NE.0) THEN
-       write(6,*)'FATAL: PAMPOISS CALLED BY SLAVE'
+       write(6,*)'FATAL: PAMPOISS CALLED BY WORKER'
        CALL STOPIT
       END IF 
 c
-c mode= 1: send data to children
+c mode= 1: send data to workers
 c
       IF (MODE.EQ.1) THEN
 !       CALL TRACER('STARTING SENDING')
@@ -110,12 +110,12 @@ c
 %endif
       END IF
 c
-c master mode= 2: receive results from children
+c manager mode= 2: receive results from workers
 c
       IF (MODE.EQ.2) THEN
        ALLOCATE(ADDBUF(MAX_PTS),STAT=IERR)
        IF(IERR/=0)WRITE(6,*)'PAMPOISS:ERROR ALLOCATING ADDBUF'
-       CALL CKCHILD_GRP(3,TID)
+       CALL CKWORKER_GRP(3,TID)
        NGRAD=1
        IF ((IGGA(1).GT.0).OR.(IGGA(2).GT.0)) NGRAD=10
        JOB= 4

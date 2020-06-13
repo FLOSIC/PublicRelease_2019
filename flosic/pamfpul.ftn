@@ -6,7 +6,7 @@ c
       SUBROUTINE PAMFPUL(MODE,MPTS,LPTS)
 c
 c calculate forces in parallel
-c called by the master DVP 10/98
+c called by the manager DVP 10/98
 c
 %ifdef MPI
        use global_inputs,only : LIBXC1
@@ -30,14 +30,14 @@ C       COMMON/TMP2/FADD1(3,MAX_IDENT),FADD2(3,MAX_IDENT)
        INTEGER :: TID,JOB,TAG,IERR,ITRANS(2),
      &            IWF,JWF !<<<<
 c
-c produce fatal error if I am a slave
+c produce fatal error if I am a worker
 c
        IF (IRANK.NE.0) THEN
-        write(6,*)'FATAL: PAMFPUL CALLED BY SLAVE'
+        write(6,*)'FATAL: PAMFPUL CALLED BY WORKER'
         CALL STOPIT
        END IF         
 c
-c mode= 1: send force data to slaves
+c mode= 1: send force data to workers
 c
        IF (MODE .EQ. 1) THEN
         NCALLED= NCALLED+1
@@ -57,7 +57,7 @@ c
         ENDIF
        END IF
 c
-c mode= 2: receive results from children
+c mode= 2: receive results from workers
 c
        IF (MODE.EQ.2) THEN
         ALLOCATE(FADD1(3,MAX_IDENT),STAT=IERR)
@@ -76,7 +76,7 @@ c
          IF(IERR/=0)WRITE(6,*)'PAMFPUL:ERROR ALLOCATING allH'
         END IF
 !>>>>>>>>>>>>
-        CALL CKCHILD(3,NTID)
+        CALL CKWORKER(3,NTID)
         DO IPROC=1,NPROC
          JOB= 12
          TAG= 0

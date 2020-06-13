@@ -51,7 +51,7 @@ C MXCUBE: MAX. NUMBER OF CUBES
 C MXRAD:  MAX. NUMBER OF POINTS FOR A RADIAL MESH
 C MXCPTS: MAX. NUMBER OF INEQIV. POINTS FOR AN ATOMIC CUBE
 C MXANG:  MAX. NUMBER OF ANGULAR POINTS FOR AN ATOMIC SPHERE
-C MSHSLV: MINIMUM NUMBER OF SLAVES FOR WHICH MASTER DOES ONLY SETUP
+C MSHSLV: MINIMUM NUMBER OF WORKERS FOR WHICH MANAGER DOES ONLY SETUP
 C
         PARAMETER (MXZCHG=100)
         PARAMETER (MXRZON=6)
@@ -1590,8 +1590,8 @@ C ADD THE INTERSTITIAL POINTS
 C
         PRINT '(A)','ASSIGNING POINTS TO INTERSTITIAL BOXES'
 c
-c send information about atomic properties to slaves
-c set npts=0 for slaves
+c send information about atomic properties to workers
+c set npts=0 for workers
 c
 %ifdef MPI
 c
@@ -1613,14 +1613,14 @@ c
 %ifdef MPI
 c
          IF ((NPROC .LT. MSHSLV) .OR. (NPROC .LE. 0)) THEN
-          CALL CKCHILD(1,NTID)
+          CALL CKWORKER(1,NTID)
           IF (NCALLED .NE. NPROC) THEN
            CALL PAMMESH(1,BOX,ERRBOX,NUMBOX(IBOX))
           ELSE
            CALL FILLIST(BOX,ERRBOX,NUMBOX(IBOX))
           END IF
          ELSE
-          CALL CKCHILD(2,NTID) 
+          CALL CKWORKER(2,NTID)
           CALL PAMMESH(1,BOX,ERRBOX,NUMBOX(IBOX))
          ENDIF
 c
@@ -1635,7 +1635,7 @@ c
          END IF
         END DO
 c
-c get mesh points from slaves
+c get mesh points from workers
 c
 %ifdef MPI
 c

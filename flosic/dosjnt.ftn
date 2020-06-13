@@ -202,11 +202,11 @@ C
        DO 850 IPILE=0,NPILE
 C LB: 07/2013 section 1 of parallelization start
 %ifdef MPI
-           CALL CKCHILD(1,NTID)
+           CALL CKWORKER(1,NTID)
            IF (NCALLED .NE. NPROC) THEN
              CALL PAMDOSJNT(1,1,IPILE)
            ELSE
-C No free childern found, master does this iteration
+C No free workers found, manager does this iteration
 C             CALL TRACER('NONE FOUND I WILL DO',IPILE)
              CALL DOSJNT_S1(IPILE)
            END IF
@@ -217,7 +217,7 @@ C LB: 07/2013 section 1 parallelization end
   850  CONTINUE
 %ifdef MPI
 C
-C Get data back from slaves
+C Get data back from workers
 C
          CALL PAMDOSJNT(1,2,0)
 %endif
@@ -289,11 +289,11 @@ C       CALL TRACER('NWF=',NWF)
        DO IWF=1,NWF
 C       DO IWF=1,1
 %ifdef MPI
-           CALL CKCHILD(1,NTID)
+           CALL CKWORKER(1,NTID)
            IF (NCALLED .NE. NPROC) THEN
              CALL PAMDOSJNT(3,1,IWF)
            ELSE
-C No free childern found, master does this iteration
+C No free workers found, manager does this iteration
 C             CALL TRACER('NONE FOUND I WILL DO',IWF)
              CALL DOSJNT3(IWF)
            END IF
@@ -303,7 +303,7 @@ C             CALL TRACER('NONE FOUND I WILL DO',IWF)
        END DO
 %ifdef MPI
 C
-C Get data back from slaves
+C Get data back from workers
 C
        CALL PAMDOSJNT(3,2,0)
 %endif

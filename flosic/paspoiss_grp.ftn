@@ -5,13 +5,13 @@ c *******************************************************************
 c
       SUBROUTINE PASPOISS_GRP(MODE)
 c
-c subroutine for parallel poisson evaluation called by slave
+c subroutine for parallel poisson evaluation called by worker
 c 09/16/97 David C. Patton
 c moved out of cpuhog into PSPOISS (D. Porezag, 08/1999)
 c
-c Mode 1: The data is received from the master and poisson is
+c Mode 1: The data is received from the manager and poisson is
 c         called  (job 2)
-c Mode 2: The resultant data (pot & rhog) are sent to the master (job 3)
+c Mode 2: The resultant data (pot & rhog) are sent to the manager (job 3)
 c
 %ifdef MPI
       use debug1
@@ -41,14 +41,14 @@ C      COMMON/TMP1/ACOULOMB(MAX_PTS),ARHOG(MAX_PTS,KRHOG,MXSPN)
       DIMENSION RHO(10*10*MXPOISS)       
       COMMON/TMP3/TMPRECV(MAX_PTS)
 c
-c produce fatal error if I am the master
+c produce fatal error if I am the manager
 c
       IF (SHMRANK.EQ.0) THEN
-       write(6,*)'FATAL: PASPOISS CALLED BY MASTER'
+       write(6,*)'FATAL: PASPOISS CALLED BY MANAGER'
        CALL STOPIT
       END IF
 c
-c slave mode= 1: receive data from master, call poisson
+c worker mode= 1: receive data from manager, call poisson
 c
       IF (MODE.EQ.1) THEN
        TAG= 301
@@ -103,7 +103,7 @@ c
        CALL MPI_SSEND(SHMRANK,1,MPI_INTEGER,0,TAG,SHMCOMM,IERR)
       END IF                    
 c
-c slave mode= 2: send potential data to master via reduce
+c worker mode= 2: send potential data to manager via reduce
 c
       IF (MODE.EQ.2) THEN
        NGRAD=1

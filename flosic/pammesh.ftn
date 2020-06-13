@@ -7,8 +7,8 @@ c
 c
 c 12/98 Dirk V. Porezag 
 c
-c mode 1: send box data to slaves 
-c mode 2: get mesh points from slaves
+c mode 1: send box data to workers
+c mode 2: get mesh points from workers
 c
 %ifdef MPI
       use mesh1,only : wmsh,rmsh,nmsh
@@ -25,14 +25,14 @@ c
       INTEGER MODE,NMULT
       INTEGER TID,JOB,TAG,IERR,MPTS,IRECVSTAT(MPI_STATUS_SIZE)
 c
-c produce fatal error if I am a slave
+c produce fatal error if I am a worker
 c
       IF (IRANK.NE.0) THEN
-       write(6,*)'FATAL: PAMMESH CALLED BY SLAVE'
+       write(6,*)'FATAL: PAMMESH CALLED BY WORKER'
        CALL STOPIT
       END IF
 c
-c mode= 1: send data for interstitial mesh creation to slave
+c mode= 1: send data for interstitial mesh creation to worker
 c
       IF (MODE.EQ.1) THEN
        NCALLED=NCALLED+1
@@ -50,10 +50,10 @@ c
        CALL MPI_SSEND(NMULT,1,MPI_INTEGER,TID,TAG,MPI_COMM_WORLD,IERR)
       END IF
 c
-c mode= 2: receive mesh points from slaves
+c mode= 2: receive mesh points from workers
 c
       IF (MODE.EQ.2) THEN
-       CALL CKCHILD(3,NTID)
+       CALL CKWORKER(3,NTID)
        DO 100 IPROC=1,NPROC
         JOB= 15
         TAG= 0

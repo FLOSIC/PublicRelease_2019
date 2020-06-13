@@ -184,7 +184,7 @@ C
 c
 %ifdef MPI
 c
-c MPI: send general data and initialize pot and rhog for all slaves
+c MPI: send general data and initialize pot and rhog for all workers
 c
 !YY senddata 101 and 102 are in sic code
 !       CALL TRACER('BEFORE SENDDATA 103')
@@ -558,7 +558,7 @@ c
 c
 %else
 c
-c dvp+mrp 10/98: let master do some work when all children are busy
+c dvp+mrp 10/98: let manager do some work when all worker are busy
 c                first deal with single weirdos, then in larger blocks
 c                with non-weirdos. The block size for non-weirdos is
 c                reduced as the number of processors increases
@@ -581,9 +581,9 @@ c
                IF (NMAST .LE. 0) THEN
 !                 CALL TRACER('BEFORE CHCKILD(2) ALPHA')
 %ifdef GROUP
-                 CALL CKCHILD_GRP(2,NTID)
+                 CALL CKWORKER_GRP(2,NTID)
 %else 
-                 CALL CKCHILD(2,NTID)
+                 CALL CKWORKER(2,NTID)
 %endif
 !                 CALL TRACER('AFTER CHCKILD(2) ALPHA')
                 !GOTO 20
@@ -601,9 +601,9 @@ c
                   DO ILOOP= 1,NLOOP
 !                   CALL TRACER('BEFORE CHCKILD(1) BETA')
 %ifdef GROUP
-                   CALL CKCHILD_GRP(1,NTID)
+                   CALL CKWORKER_GRP(1,NTID)
 %else
-                   CALL CKCHILD(1,NTID)
+                   CALL CKWORKER(1,NTID)
 %endif
 !                   CALL TRACER('AFTER CHCKILD(1) BETA')
 %ifdef GROUP
@@ -673,7 +673,7 @@ c
 c
 %else
 c
-c dvp+mrp 10/98: let master do some work when all children are busy
+c dvp+mrp 10/98: let manager do some work when all workers are busy
 c                first deal with single weirdos, then in larger blocks
 c                with non-weirdos. The block size for non-weirdos is
 c                reduced as the number of processors increases
@@ -696,9 +696,9 @@ c
            IF (NMAST .LE. 0) THEN
 !            CALL TRACER('BEFORE CHCKILD(2) GAMMA')
 %ifdef GROUP
-            CALL CKCHILD_GRP(2,NTID)
+            CALL CKWORKER_GRP(2,NTID)
 %else
-            CALL CKCHILD(2,NTID)
+            CALL CKWORKER(2,NTID)
 %endif
 !            CALL TRACER('AFTER CHCKILD(2) GAMMA')
            ! GOTO 30
@@ -716,9 +716,9 @@ c
               DO ILOOP= 1,NLOOP
 !               CALL TRACER('BEFORE CHCKILD(1) DELTA')
 %ifdef GROUP
-               CALL CKCHILD_GRP(1,NTID)
+               CALL CKWORKER_GRP(1,NTID)
 %else
-               CALL CKCHILD(1,NTID)
+               CALL CKWORKER(1,NTID)
 %endif
 !               CALL TRACER('AFTER CHCKILD(1) DELTA')
 %ifdef GROUP

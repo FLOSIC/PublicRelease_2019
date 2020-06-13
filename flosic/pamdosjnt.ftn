@@ -5,7 +5,7 @@ c *******************************************************************
 c
       SUBROUTINE PAMDOSJNT(SECTION,MODE,ITER)
 c
-c Subroutine for parallel joint density of states called by master
+c Subroutine for parallel joint density of states called by manager
 C Luis Basurto 06/2013
 c taken from
 c 20/03/98 Jens Kortus   kortus@theo.physik.tu-freiberg.de
@@ -27,10 +27,10 @@ c
       INTEGER I,J,K,IIP,IPTS,NTID
       REAL*8 POL_TEMP,TIME1,TIME2
 c
-c produce fatal error if I am a slave
+c produce fatal error if I am a worker
 c
       IF (IRANK.NE.0) THEN
-       write(6,*)'FATAL: PAMiDOSJNT CALLED BY SLAVE'
+       write(6,*)'FATAL: PAMiDOSJNT CALLED BY WORKER'
        CALL STOPIT
       END IF         
 
@@ -52,12 +52,12 @@ C        CALL TRACER('TO',TID)
      &                TID,TAG,MPI_COMM_WORLD,IERR)
       END IF  
 c
-c receive data from slaves
+c receive data from workers
 C
       IF (MODE.EQ.2) THEN
         ALLOCATE(TEMP_RCV2(NWF,NWF,3),STAT=IERR)
         IF(IERR.NE.0) WRITE(6,*) 'ERROR ALLOCATING TEMP_RCV2'
-        CALL CKCHILD(3,NTID)
+        CALL CKWORKER(3,NTID)
         JOB= 27
         TAG= 0
 C        CALL TRACER('TELLING ALL TO SEND RESULTS')
@@ -101,12 +101,12 @@ C        CALL TRACER('TO',TID)
      &                TID,TAG,MPI_COMM_WORLD,IERR)
       END IF  
 c
-c receive data from slaves
+c receive data from workers
 C
       IF (MODE.EQ.2) THEN
         ALLOCATE(TEMP_RCV(NSPEC),STAT=IERR)
         IF(IERR.NE.0) WRITE(6,*)'ERROR ALLOCATING TEMP_RCV'
-        CALL CKCHILD(3,NTID)
+        CALL CKWORKER(3,NTID)
         JOB= 25
         TAG= 0
         DO IIP=1,NPROC

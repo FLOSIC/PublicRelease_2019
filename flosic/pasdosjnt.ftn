@@ -24,10 +24,10 @@ c
       INTEGER TAG,IERR,IRECVSTAT(MPI_STATUS_SIZE)
       REAL*8 POL_TEMP
 c
-c produce fatal error if I am the master
+c produce fatal error if I am the manager
 c
        IF (IRANK.EQ.0) THEN
-        write(6,*)'FATAL: PASDOSJNT CALLED BY MASTER'
+        write(6,*)'FATAL: PASDOSJNT CALLED BY MANAGER'
         CALL STOPIT
        END IF         
        SELECT CASE (SECTION)
@@ -52,7 +52,7 @@ C
      &                 MPI_COMM_WORLD,IERR)   
        ENDIF
 c
-c send joint dos data to master
+c send joint dos data to manager
 c
        IF (MODE.EQ.2) THEN
         ALLOCATE(TEMP_RCV2(NWF,NWF,3),STAT=IERR)
@@ -94,7 +94,7 @@ C
      &                 MPI_COMM_WORLD,IERR)   
        ENDIF
 c
-c send joint dos data to master
+c send joint dos data to manager
 c
        IF (MODE.EQ.2) THEN
          ALLOCATE(TEMP_RCV(NSPEC),STAT=IERR)
