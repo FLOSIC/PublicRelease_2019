@@ -1,5 +1,7 @@
 # FLOSIC code public release
 
+### There is a newer version of FLOSIC software. Please refer to FLOSIC2020 for more features and bug fixes: https://github.com/FLOSIC/PublicRelease_2020
+
 ## FLOSIC18
 
 FLOSIC18 is an electronic structure software package that implements the FERMI-LOWDIN Self-interaction correction (FLO-SIC) method for atoms and molecules.   FLO-SIC removes self-interaction errors from density functional theory calculations. 
